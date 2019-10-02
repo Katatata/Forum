@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Reaction{% endblock %}
+
+{% block body %}
+    <h1>Create new Reaction</h1>
+
+    {{ include('reaction/_form.html.twig') }}
+
+    <a href="{{ path('reaction_index') }}">back to list</a>
+{% endblock %}

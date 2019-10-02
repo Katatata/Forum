@@ -1,0 +1,12 @@
+{% extends "@FOSUser/layout.html.twig" %}
+
+{% block fos_user_content %}
+<h1 class="d-flex justify-content-center" style="margin-top: 100px">Register</h1>
+
+<div class="container">
+    <a href="/login">
+        <i class="fas fa-arrow-left"></i> <span>Login</span>
+    </a>
+</div>
+{% include "@FOSUser/Registration/register_content.html.twig" %}
+{% endblock fos_user_content %}

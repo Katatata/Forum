@@ -1,0 +1,80 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% if error %}
+    <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+{% endif %}
+
+<div class="container holder">
+    <form action="{{ path("fos_user_security_check") }}" method="post">
+        {% if csrf_token %}
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+        {% endif %}
+    
+        {# <label for="username">{{ 'security.login.username'|trans }}</label>
+        <input type="text" id="username" name="_username" value="{{ last_username }}" required="required" autocomplete="username" /> #}
+    
+            <div class="mdc-text-field mdc-text-field--outlined">
+                <input type="text" id="username" name="_username" value="{{ last_username }}" required="required" autocomplete="username" class="mdc-text-field__input">
+                <div class="mdc-notched-outline">
+                    <div class="mdc-notched-outline__leading"></div>
+                    <div class="mdc-notched-outline__notch">
+                        <label for="tf-outlined" class="mdc-floating-label" for="username">{{ 'security.login.username'|trans }}</label>
+                    </div>
+                    <div class="mdc-notched-outline__trailing"></div>
+                </div>
+            </div>
+    
+        {# <label for="password">{{ 'security.login.password'|trans }}</label>
+        <input type="password" id="password" name="_password" required="required" autocomplete="current-password" /> #}
+    
+        <div class="mdc-text-field mdc-text-field--outlined">
+            <input type="password" id="password" name="_password" required="required" autocomplete="current-password" class="mdc-text-field__input">
+            <div class="mdc-notched-outline">
+                <div class="mdc-notched-outline__leading"></div>
+                <div class="mdc-notched-outline__notch">
+                    <label for="tf-outlined" class="mdc-floating-label" for="password">{{ 'security.login.password'|trans }}</label>
+                </div>
+                <div class="mdc-notched-outline__trailing"></div>
+            </div>
+        </div>
+    
+        {# <input type="checkbox" id="remember_me" name="_remember_me" value="on" />
+        <label for="remember_me">{{ 'security.login.remember_me'|trans }}</label> #}
+    
+        <div class="mdc-form-field">
+            <div class="mdc-checkbox">
+                <input type="checkbox" class="mdc-checkbox__native-control" id="remember_me" name="_remember_me" value="on" />
+                <div class="mdc-checkbox__background">
+                <svg class="mdc-checkbox__checkmark"
+                        viewBox="0 0 24 24">
+                    <path class="mdc-checkbox__checkmark-path"
+                        fill="none"
+                        d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+                </svg>
+                <div class="mdc-checkbox__mixedmark"></div>
+                </div>
+            </div>
+            <label for="remember_me">{{ 'security.login.remember_me'|trans }}</label>
+        </div>
+    
+        <div class="logIn d-flex justify-content-center">
+            <input class="btn btn-success" type="submit" id="_submit" name="_submit" value="{{ 'security.login.submit'|trans }}" />
+            <a class="btn btn-primary navbar-btn" href="/register">
+                Register
+            </a>
+        </div>
+    </form>
+</div>
+
+
+<script>
+        [].forEach.call(document.querySelectorAll('.mdc-text-field'), function(el) {
+            mdc.textField.MDCTextField.attachTo(el);
+        });
+        [].forEach.call(document.querySelectorAll('.mdc-select'), function(el) {
+            mdc.select.MDCSelect.attachTo(el);
+            select.listen('MDCSelect:change', () => {
+                alert(`Selected option at index ${select.selectedIndex} with value "${select.value}"`);
+            });
+        });
+</script>

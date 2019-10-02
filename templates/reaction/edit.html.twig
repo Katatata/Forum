@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Reaction{% endblock %}
+
+{% block body %}
+    {# <div class="container">
+        <a href="/post/{{currentPost}}">
+                <i class="fas fa-arrow-left"></i> &nbsp; <span>Go back</span>
+        </a>
+    </div> #}
+    
+    <div class="container">
+            <a href="{{post}}" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> <span>Go back</span>
+            </a>
+    </div>
+
+    <h1 class="d-flex justify-content-center">Edit reaction</h1>
+
+    {{ form_start(form) }}
+        <div class="container">
+            <div class="mdc-text-field  mdc-text-field--fullwidth mdc-text-field--textarea" style="margin-top: 18px;padding: 0px 20px;">
+                <div class="mdc-text-field-character-counter">0 / 40000</div>
+                {{ form_widget(form.Body, {'attr': {'class': 'mdc-text-field__input', 'style' : '', 'rows' : '8', 'cols' : '', 'maxlength' : '40000'}}) }}
+                {# <textarea class="mdc-text-field__input" rows="8" cols="40" maxlength="140"></textarea> #}
+
+                <div class="mdc-notched-outline">
+                    <div class="mdc-notched-outline__leading"></div>
+                    <div class="mdc-notched-outline__notch">
+                    {# <label for="textarea" class="mdc-floating-label">{{ form_label(form.Body) }}</label> #}
+                    {{ form_label(form.Body, null, {'label_attr' : {'class' : 'mdc-floating-label'}}) }}
+                    </div>
+                    <div class="mdc-notched-outline__trailing"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="d-flex justify-content-center">
+                <input type="hidden" name="_post" value="{{post}}">
+            {{ form_widget(form.save, {'attr': {'style': 'margin-top: 20px;'}}) }}
+        
+            <!-- <a href="{{ path('post_index') }}" class="btn btn-primary">back to list</a> -->
+        </div>
+    {{ form_end(form) }}
+
+    <form class="d-flex justify-content-center" method="post" action="{{ path('reaction_delete', {'id': reaction.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+            <input type="hidden" name="_method" value="DELETE">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reaction.id) }}">
+            <button class="btn btn-danger">
+                    <i class="fas fa-trash-alt"></i> <span>Delete post</span>
+            </button>
+    </form>        
+{% endblock %}

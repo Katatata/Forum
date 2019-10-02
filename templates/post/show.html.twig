@@ -1,0 +1,216 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Post{% endblock %}
+
+{% block body %}
+    {# <h1>Post</h1> #}
+    {# 
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th>Id</th>
+                    <td>{{ post.id }}</td>
+                </tr>
+                <tr>
+                    <th>Title</th>
+                    <td>{{ post.title }}</td>
+                </tr>
+                <tr>
+                    <th>Body</th>
+                    <td>{{ post.Body }}</td>
+                </tr>
+            </tbody>
+        </table> 
+    #}
+    <div class="container">
+            <a href="{{ path('post_index') }}">
+                <i class="fas fa-arrow-left"></i> &nbsp; <span>Go back</span>
+            </a>
+    </div>
+
+    <div class="forum-container container" style="max-width: 885px;">
+        <div class="posts-container">
+            <div class="post-container" id="{{post.id}}" style="padding: 34px 34px 20px 34px;cursor:default">
+                <div class="post-title">{{post.title}}</div>
+                <div style="display: flex;">
+                    <div class="post-category" id="{{post.category}}">{{post.category}}</div>
+                    <div class="post-op" onclick="cat(this)">{{post.op}}</div>
+                    <div class="post-comment" id="{{post.id}}" style="margin: 0 0 0 30px">
+                            {% set count = 0 %}
+                            {% for reaction in post.reactions %}
+                                {% set count = count + 1 %}
+                            {% endfor %}
+                            {% if count == 0 %}
+                                <i class="far fa-comments"></i>
+                            {% else %}
+                                <i class="fas fa-comments"></i>
+                            {% endif %}
+                            <span>{{ count }} Comments</span>
+                    </div>
+                </div>
+                <div class="post-preview">
+                    <span class="post-text">{{post.body}}</span>  
+                </div>
+                <div style="display: flex;justify-content: flex-end;">
+                    {# <div class="post-op" onclick="cat(this)">{{post.op}}</div> #}
+                </div>
+
+                <div>
+                    {% if is_granted('ROLE_ADMIN') or user == op %}
+                        <form method="post" action="{{ path('post_delete', {'id': post.id}) }}" style="display: contents;" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
+                            <button class="btn btn-danger" style="float: right">
+                                    <i class="fas fa-trash-alt"></i> <span>Delete post</span>
+                            </button>
+                        </form>
+
+                        <a href="{{ path('post_edit', {'id': post.id}) }}" class="btn btn-warning" style="float: right;color:#f7f76ee0;">
+                            <i class="fas fa-pencil-alt"></i> &nbsp; <span>Edit post</span>
+                        </a> 
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+
+        <div class="posts-container" style="padding: 0px 30px 30px 30px">
+            <div class="post-container" style="cursor: default">
+                <div style="padding: 15px" {% if user == 'none' %} onclick="javascript:window.location.href='/login'"{% endif %}>
+                    {{ form_start(comment, {'attr': {'style': 'margin-bottom: 0px;'}}) }}
+                        <div class="mdc-text-field  mdc-text-field--fullwidth mdc-text-field--textarea {% if user == 'none' %}mdc-text-field--disabled{% endif %}" style="margin-top: 18px;padding: 0px 20px;">
+                            <div class="mdc-text-field-character-counter">0 / 10000</div>
+                            {{ form_widget(comment.Body, {'attr': {'class': 'mdc-text-field__input', 'style' : '', 'rows' : '4', 'cols' : '', 'maxlength' : '10000'}}) }}
+                            <!-- <textarea class="mdc-text-field__input" rows="4" cols="40" maxlength="140" {% if user == 'none' %}disabled{% endif %}></textarea> -->
+                
+                            <div class="mdc-notched-outline">
+                                <div class="mdc-notched-outline__leading"></div>
+                                <div class="mdc-notched-outline__notch">
+                                <label for="textarea" class="mdc-floating-label">Comment</label>
+                                </div>
+                                <div class="mdc-notched-outline__trailing"></div>
+                            </div>
+                        </div>
+                        
+                        {{ form_widget(comment.save, {'attr': {'style': 'margin: 20px 0;'}}) }}
+                    {{ form_end(comment) }}
+                </div>
+                <div class="comments" id="comments">
+                    {% for comment in comments %}
+                        <div class="comment">
+                            <span class="post-category">{{ comment.user }}</span>
+                            </br>
+                            <span>{{ comment }} </span>
+                            {% if comment.user.id == user %}
+                                <!-- <i class="fas fa-trash" style="color: red; float: right"></i> -->
+                                <form method="post" action="{{ path('reaction_delete_custom', {'id': comment.id}) }}" style=" float: right" onsubmit="return confirm('Are you sure you want to delete this comment?');">
+                                    <input type="hidden" name="_method" value="CUSTOM">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ comment.id) }}">
+                                    <input type="hidden" name="_post" value="{{ post.id }}">
+                                    <button style="background-color: transparent;border: none;">
+                                        <i class="fas fa-trash" style="color: red;"></i>
+                                    </button>
+                                </form>
+                                <form method="post" action="{{ path('reaction_edit', {'id': comment.id}) }}" style=" float: right">
+                                    <input type="hidden" name="_post" value="{{ post.id }}">
+                                    <button style="background-color: transparent;border: none;">
+                                        <i class="fas fa-pencil-alt" style="color: #f7f76ee0;"></i>
+                                    </button>
+                                </form>
+                            {% endif %}
+
+                            {% set hasReply = false %}
+
+                            <div class="replies" style="display: none">
+                                {% for reply in comment.reactions %}
+                                    {% set hasReply = true %}
+                                    <div class="comment reply">
+                                        <span class="post-category">{{ reply.user }}</span>
+                                        </br>
+                                        <span>{{ reply }} </span>
+                                        {% if reply.user.id == user %}
+                                            <!-- <i class="fas fa-trash" style="color: red; float: right"></i> -->
+                                            <form method="post" action="{{ path('reaction_delete_custom', {'id': reply.id}) }}" style=" float: right" onsubmit="return confirm('Are you sure you want to delete this comment?');">
+                                                <input type="hidden" name="_method" value="CUSTOM">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reply.id) }}">
+                                                <input type="hidden" name="_post" value="{{ post.id }}">
+                                                <button style="background-color: transparent;border: none;">
+                                                    <i class="fas fa-trash" style="color: red;"></i>
+                                                </button>
+                                            </form>
+                                            <form method="post" action="{{ path('reaction_edit', {'id': reply.id}) }}" style=" float: right">
+                                                    <input type="hidden" name="_post" value="{{ post.id }}">
+                                                    <button style="background-color: transparent;border: none;">
+                                                        <i class="fas fa-pencil-alt" style="color: #f7f76ee0;"></i>
+                                                    </button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            {% if hasReply == true %}
+                                <div class="d-flex justify-content-center">
+                                    <a href="javascript:void(0)" onclick="showReply(this)">Show replies...</a>
+                                </div>
+                            {% endif %}
+                            
+                        </div>
+                    {% else %}
+                        <div class="comment">
+                            <span>This post has no comments </span>
+                        </div>
+                    {% endfor %}
+
+
+                    {# Page Numbers #}
+                    <div class="d-flex justify-content-center page-num-space">  
+
+                        {# If the post amount is higher than 5 #}
+                        {% if commentsTotal|length > 15 %}
+            
+                            {# Set many #}
+                            {% set page = 0 %}
+            
+                            {# Loop through posts amount #}
+                            {% for comment in commentsTotal|batch(15, 'No item') %}
+            
+                                {# many is how much posts there are #}
+                                {% set page = page + 1 %}
+            
+                                <a href="/post/{{currentPost}}/page/{{page}}" class="page-num {% if currentPage == page %}current{% endif %}">{{page}}</a>
+
+                            {% endfor %}
+            
+                        {# The post amount is not higher than 5 #}
+                        {% else %}
+                        
+                            {# only 1 page #}
+                            <a href="/post/{{currentPost}}/page/1" class="page-num {% if currentPage == 1 %}current{% endif %}">1</a>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function showReply(element) {
+            if(element.parentElement.previousElementSibling.style.display === 'block') {
+                element.parentElement.previousElementSibling.style.display = 'none';
+                element.innerHTML = 'Show replies...';
+            }
+            else if(element.parentElement.previousElementSibling.style.display === 'none') {
+                element.parentElement.previousElementSibling.style.display = 'block';
+                element.innerHTML = 'Hide replies...';
+            }
+        }
+    </script>
+    {# <a href="{{ path('post_index') }}">back to list</a> #}
+
+    {# <a href="{{ path('post_edit', {'id': post.id}) }}">edit</a> #}
+
+    {# {{ include('post/_delete_form.html.twig') }} #}
+{% endblock %}

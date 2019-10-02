@@ -1,0 +1,107 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Post index{% endblock %}
+
+{% block body %}
+    <!-- <h1>Forum</h1> -->
+
+    <button onclick="window.location.href ='/post/new'" class="btn btn-success navbar-btn" style="display: block;margin-left: auto;margin-right: auto;">
+        <i class="fas fa-pencil-alt"></i> 
+        <span>Create post</span>
+    </button>
+
+    <div class="forum-container container">
+        <div class="posts-container">
+            {% for post in posts %}
+                <div class="post-container" id="{{post.id}}" onclick="show(this)">
+                    <div class="post-title">{{post.title}}</div>
+                    <div style="display: flex;">
+                        <div class="post-category" id="{{post.category}}" onclick="cat(this)">{{post.category}}</div>
+                        <div class="post-op">{{post.op}}</div>
+                    </div>
+                    <div class="post-preview">
+                        <span class="post-text">{{post.body}}</span>  
+                    </div>
+                    <div style="display: flex;justify-content: flex-end;">
+                        <div class="post-comment" id="{{post.id}}" onclick="comment(this)">
+                            {% set count = 0 %}
+                            {% for reaction in post.reactions %}
+                                {% set count = count + 1 %}
+                            {% endfor %}
+                            {% if count == 0 %}
+                                <i class="far fa-comments"></i>
+                            {% else %}
+                                <i class="fas fa-comments"></i>
+                            {% endif %}
+                            <span>{{ count }}</span>
+                        </div>
+                        {# <div class="post-op" onclick="cat(this)">{{post.op}}</div> #}
+                    </div>
+                </div>
+            {% else %}
+                <div class="post-container">
+                    <div class="post-title">No posts found</div>
+                    <div class="post-preview">&nbsp;</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center page-num-space">
+        {#  Check if this is a page page #}
+        {% if pagePage == true %}
+
+            {# If the post amount is higher than 40 #}
+            {% if array|length > 40 %}
+
+                {# set page #}
+                {% set page = 0 %}
+
+                {# Loop through posts amount #}
+                {% for post in array|batch(40, 'No comment') %}
+
+                    {# many is how much posts there are #}
+                    {% set page = page + 1 %}
+
+                    {# Make page number link #}
+                    <a href="/post/page/{{page}}" class="page-num {% if currentPage == page %}current{% endif %}">{{page}}</a>
+
+                {% endfor %}
+
+            {# The post amount is not higher than 40 #}
+            {% else %}
+            
+                {# only 1 page #}
+                <a href="/post/page/1" class="page-num {% if currentPage == 1 %}current{% endif %}">1</a>
+            {% endif %}
+
+        {# It is not a page page #}
+        {% else %}
+            <a href="/post/page/1" class="page-num">1</a>
+        {% endif %}
+    </div>
+
+    <script>
+        function show(element) {
+            window.location.href = `/post/`+ element.id;
+        }
+        function cat(element) {
+            window.location.href = `/category/`+ element.id;
+        }
+        function comment(element) {
+            window.location.href = `/post/`+ element.id + '#comments';
+        }
+
+        let text = document.querySelectorAll('.post-preview');
+
+        for( body of text) {
+            let inner = body.innerHTML;
+
+            let edit = inner.substr(0, 100) + "...";
+
+            body.innerHTML = edit;
+
+            console.log(edit)
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% block nav %} 
+<header>
+  <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container">
+        <a class="navbar-brand" href="/"><i class="fas fa-book-reader"></i> Forum</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample07" aria-controls="navbarsExample07" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsExample07">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item" id="nav-post">
+                    <a class="nav-link" href="/post">Posts <span class="sr-only">(current)</span></a>
+                </li>
+                {% if is_granted('ROLE_ADMIN') %} 
+                    <li class="nav-item" id="nav-user">
+                            <a class="nav-link" href="/user">Users <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item" id="nav-cat">
+                            <a class="nav-link" href="/category">Categories <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item" id="nav-cat">
+                            <a class="nav-link" href="/reaction">Reactions <span class="sr-only">(current)</span></a>
+                    </li>
+                {% endif %}
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if is_granted('ROLE_USER') %} 
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/logout">
+                            <button class="btn btn-danger navbar-btn">Logout</button>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/login">
+                            <button class="btn btn-primary navbar-btn">Login</button>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/register">
+                            <button class="btn btn-success navbar-btn">Register</button>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+      </div>
+    </nav>
+</header>
+
+<script>
+    var permalink = window.location.pathname
+    if(permalink.match('/post')) {
+      navItem = document.getElementById('nav-post');
+      navItem.classList += ' active'
+    }
+    else if(permalink.match('/user/')) {
+      navItem = document.getElementById('nav-user');
+      navItem.classList += ' active'
+    }
+    else if(permalink.match('/category/')) {
+      navItem = document.getElementById('nav-cat');
+      navItem.classList += ' active'
+    }
+</script>
+{% endblock %}

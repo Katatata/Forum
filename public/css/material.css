@@ -1,0 +1,49 @@
+.mdc-text-field__input {
+    margin-top: -10px;
+    color: rgb(236, 236, 236) !important;
+}
+.mdc-select__native-control {
+    margin-top: -24px;
+    color: rgb(236, 236, 236) !important;
+}
+.mdc-select__native-control option {
+    color: rgb(236, 236, 236) !important;
+    background-color: #121212e0;
+    border: #121212e0 1px solid;
+}
+.mdc-floating-label, .mdc-select__dropdown-icon, .mdc-form-field label {
+    color: rgb(236, 236, 236) !important;
+}
+.mdc-notched-outline__leading, .mdc-notched-outline__notch, .mdc-notched-outline__trailing{
+    border-color: #e1e1e185 !important;
+}
+.mdc-checkbox__background {
+    border-color: #e1e1e185 !important;
+}
+.mdc-text-field-character-counter {
+    right: 52px !important;
+    color: #ffffff66 !important;
+}
+.mdc-text-field--textarea.mdc-text-field--disabled {
+    background-color: #f9f9f945;
+}
+
+    
+.holder {
+    display: flex;
+    /* flex-direction: row; */
+    justify-content: center;
+}
+
+.holder form {
+    display: flex;
+    flex-direction: column;
+    width: 501px;
+}
+.holder form > *{
+    margin-top: 50px;
+}
+
+.bmd-form-group {
+    width: inherit;
+}

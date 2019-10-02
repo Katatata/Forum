@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Post{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <a href="/post/{{currentPost}}">
+                <i class="fas fa-arrow-left"></i> &nbsp; <span>Go back</span>
+        </a>
+    </div>
+
+    <h1 class="d-flex justify-content-center">Edit post</h1>
+
+    {{ form_start(form) }}
+    <div class="container">
+        <div class="mdc-text-field mdc-text-field--outlined">
+            {# <input type="text" id="form_Title" name="form[Title]" class="mdc-text-field__input"> #}
+            {{ form_widget(form.Title, {'attr': {'class': 'mdc-text-field__input'}}) }}
+            <div class="mdc-notched-outline">
+                <div class="mdc-notched-outline__leading"></div>
+                <div class="mdc-notched-outline__notch">
+                    {# <label for="tf-outlined" class="mdc-floating-label">{{ form_label(form.Title) }}</label> #}
+                    {{ form_label(form.Title, null, {'label_attr' : {'class' : 'mdc-floating-label'}}) }}
+                </div>
+                <div class="mdc-notched-outline__trailing"></div>
+            </div>
+        </div>
+
+        <div class="mdc-text-field  mdc-text-field--fullwidth mdc-text-field--textarea" style="margin-top: 18px;padding: 0px 20px;">
+            <div class="mdc-text-field-character-counter">0 / 40000</div>
+            {{ form_widget(form.Body, {'attr': {'class': 'mdc-text-field__input', 'style' : '', 'rows' : '8', 'cols' : '', 'maxlength' : '40000'}}) }}
+            {# <textarea class="mdc-text-field__input" rows="8" cols="40" maxlength="140"></textarea> #}
+
+            <div class="mdc-notched-outline">
+                <div class="mdc-notched-outline__leading"></div>
+                <div class="mdc-notched-outline__notch">
+                {# <label for="textarea" class="mdc-floating-label">{{ form_label(form.Body) }}</label> #}
+                {{ form_label(form.Body, null, {'label_attr' : {'class' : 'mdc-floating-label'}}) }}
+                </div>
+                <div class="mdc-notched-outline__trailing"></div>
+            </div>
+        </div>
+
+        <div class="mdc-select mdc-select--outlined" style="margin-top: 18px;">
+            <i class="mdc-select__dropdown-icon"></i>
+            {{ form_widget(form.Category, {'attr': {'class': 'mdc-select__native-control'}}) }}
+            <div class="mdc-notched-outline">
+                <div class="mdc-notched-outline__leading"></div>
+                <div class="mdc-notched-outline__notch">
+                    {# <label class="mdc-floating-label">{{form_label(form.Category)}}</label> #}
+                    {{ form_label(form.Category, null, {'label_attr' : {'class' : 'mdc-floating-label'}}) }}
+                </div>
+                <div class="mdc-notched-outline__trailing"></div>
+            </div>
+            <div class="mdc-line-ripple"></div>
+        </div>
+
+    </div>
+
+    <div class="d-flex justify-content-center">
+        {{ form_widget(form.save) }}
+    
+        <!-- <a href="{{ path('post_index') }}" class="btn btn-primary">back to list</a> -->
+    </div>
+    {{ form_end(form) }}
+
+    <form method="post" action="{{ path('post_delete', {'id': post.id}) }}" style="display: flex;justify-content: center;" onsubmit="return confirm('Are you sure you want to delete this item?');">
+            <input type="hidden" name="_method" value="DELETE">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
+            <button class="btn btn-danger">
+                    <i class="fas fa-trash-alt"></i> <span>Delete post</span>
+            </button>
+    </form>
+    <!-- {{ include('post/_form.html.twig', {'button_label': 'Update'}) }} -->
+
+    <!-- <a href="{{ path('post_index') }}">back to list</a> -->
+
+    <!-- {{ include('post/_delete_form.html.twig') }} -->
+{% endblock %}

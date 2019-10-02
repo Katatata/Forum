@@ -1,0 +1,122 @@
+body {
+    color: #bbbbbb;
+}
+
+.forum-container {
+    /* background: rebeccapurple; */
+    max-width: 580px;
+    min-height: 250px;
+    /* border: 1px #e1e1e1 solid; */
+    border-radius: 5px; 
+}
+@media screen and (max-width: 769px) {
+    .forum-container {
+        max-width: 87%;
+    }
+}
+.posts-container {
+    padding: 30px 30px;
+}
+.posts-container :first-child {
+    margin-top: 0px;
+}
+@media screen and (max-width: 769px) {
+    .posts-container {
+        padding: 30px 0;
+    }
+}
+.post-container {
+    background: #191919;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 19px;
+    /* border: 1px solid #e1e1e1; */
+    border: 1px solid #e1e1e185;
+    /* padding: 10px; */
+    padding: 18px;
+    display: flex;
+    /* justify-content: space-between; */
+    flex-direction: column;
+}
+.post-container .post-title {
+    font-size: 25px;
+}
+.post-container .post-category {
+    font-size: 13px;
+    color: #ff6e6e;
+    width: fit-content;
+    margin-right: 10px;
+    line-height: 2;
+}
+.post-container .post-category:hover {
+    color: #6e87ff;
+}
+
+.post-container .post-preview {
+    border: 1px solid #e1e1e185;
+    padding: 20px;
+    margin-top: 1%;
+    background: #252525;
+    overflow: hidden;
+}
+
+.post-container .post-preview .post-text {
+    word-wrap: break-word
+}
+
+.post-container .post-comment  {
+    margin-top: 9px;
+    margin-right: 9px;
+}
+
+
+hr {
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+}
+
+.comments .comment {
+    padding: 19px;
+    border-top: 1px solid #e1e1e185;
+}
+
+.comments .comment .replies .reply {
+    padding: 19px 0px 19px 19px;
+    border-top: 0px solid #e1e1e185;
+    border-left: 1px solid #e1e1e185;
+}
+
+.comments .comment .replies{
+    margin-top: 30px;
+}
+.comments :first-child.comment {
+    /* border-top: 0px solid #ccc; */
+}
+.comments :last-child.comment {
+    border-bottom: 0px solid #e1e1e185;
+}
+.comment span {
+}
+
+.page-num.current {
+    border: 1px solid #e1e1e185;
+    padding-top: 4px;
+    width: 33px;
+    height: 33px;
+    text-align: center;
+    color: #e1e1e185;
+}
+
+.page-num{
+    /* border: 1px solid #e1e1e185; */
+    padding-top: 4px;
+    width: 33px;
+    height: 33px;
+    text-align: center;
+    color: #e1e1e185;
+}
+
+.page-num-space {
+    margin-bottom: 50px;
+}

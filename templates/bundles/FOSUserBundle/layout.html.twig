@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+        <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+        <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+        <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+        <link rel="stylesheet" href="{{ asset('css/material.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/main.css') }}">
+    </head>
+    <body>
+        {# <div>
+            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
+                <a href="{{ path('fos_user_security_logout') }}">
+                    {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
+                </a>
+            {% else %}
+                <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
+            {% endif %}
+        </div> #}
+
+        {% include ("blocks/nav.twig") %}
+
+        {% if app.request.hasPreviousSession %}
+            {% for type, messages in app.session.flashbag.all() %}
+                {% for message in messages %}
+                    <div class="flash-{{ type }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+
+        <div>
+            {% block fos_user_content %}
+            {% endblock fos_user_content %}
+        </div>
+
+        
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
+        <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
+    </body>
+</html>
