@@ -69,6 +69,10 @@ body {
     margin-right: 9px;
 }
 
+.post-image {
+    max-width: -webkit-fill-available;
+}
+
 
 hr {
     border: 0;

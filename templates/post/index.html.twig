@@ -20,7 +20,8 @@
                         <div class="post-op">{{post.op}}</div>
                     </div>
                     <div class="post-preview">
-                        <span class="post-text">{{post.body}}</span>  
+                        <span class="post-text">{{post.body|length > 100 ? post.body|slice(0, 100) ~ '...' : post.body}}</span>  
+                        <img class="post-image" src="{{ vich_uploader_asset(post, 'imageFile') }}" alt="{{ post.image }}"/>
                     </div>
                     <div style="display: flex;justify-content: flex-end;">
                         <div class="post-comment" id="{{post.id}}" onclick="comment(this)">
@@ -90,18 +91,6 @@
         }
         function comment(element) {
             window.location.href = `/post/`+ element.id + '#comments';
-        }
-
-        let text = document.querySelectorAll('.post-preview');
-
-        for( body of text) {
-            let inner = body.innerHTML;
-
-            let edit = inner.substr(0, 100) + "...";
-
-            body.innerHTML = edit;
-
-            console.log(edit)
         }
     </script>
 {% endblock %}

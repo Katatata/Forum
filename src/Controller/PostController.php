@@ -12,10 +12,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Form\Extension\Core\Type\{TextType,ButtonType,EmailType,HiddenType,PasswordType,TextareaType,SubmitType,NumberType,DateType,MoneyType,BirthdayType};
+use Symfony\Component\Form\Extension\Core\Type\{TextType,ButtonType,EmailType,HiddenType,PasswordType,TextareaType,SubmitType,NumberType,DateType,MoneyType,BirthdayType,FileType};
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-
-
+use Vich\UploaderBundle\Form\Type\VichFileType;
 
 /**
  * @Route("/post")
@@ -90,6 +89,7 @@ class PostController extends AbstractController
         $form = $this->createFormBuilder($post)
         ->add('Title', TextType::class)
         ->add('Body', TextareaType::class)
+        ->add('imageFile', VichFileType::class, array('label' => 'Brochure (PDF file)'))
         ->add('Category', EntityType::class,[
             // looks for choices from this entity
             'class' => Category::class,
