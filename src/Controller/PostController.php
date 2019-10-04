@@ -244,6 +244,7 @@ class PostController extends AbstractController
         $form = $this->createFormBuilder($post)
         ->add('Title', TextType::class)
         ->add('Body', TextareaType::class)
+        ->add('imageFile', VichFileType::class, array('label' => 'Brochure (PDF file)'))
         ->add('Category', EntityType::class,[
             // looks for choices from this entity
             'class' => Category::class,

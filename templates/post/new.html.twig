@@ -34,6 +34,8 @@
                     <div class="mdc-notched-outline__trailing"></div>
                 </div>
             </div>
+            
+            <div style="margin-top: 10px">{{ form_widget(form.imageFile) }}</div>
 
             <div class="mdc-select mdc-select--outlined" style="margin-top: 18px;">
                 <i class="mdc-select__dropdown-icon"></i>
@@ -53,8 +55,6 @@
 
         <div class="d-flex justify-content-center">
             {{ form_widget(form.save) }}
-
-            {{ form_widget(form.imageFile) }}
         
             <a href="{{ path('post_index') }}" class="btn btn-primary">back to list</a>
         </div>
