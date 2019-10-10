@@ -3,33 +3,37 @@
 {% block title %}Reaction index{% endblock %}
 
 {% block body %}
-    <h1>Reaction index</h1>
+    <h1 class="d-flex justify-content-center">Reaction index</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Body</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for reaction in reactions %}
-            <tr>
-                <td>{{ reaction.id }}</td>
-                <td>{{ reaction.body }}</td>
-                <td>
-                    <a href="{{ path('reaction_show', {'id': reaction.id}) }}">show</a>
-                    <a href="{{ path('reaction_edit', {'id': reaction.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="3">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <div class="container-fluid">
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Id</th>
+                    <th>Body</th>
+                    <th>actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for reaction in reactions %}
+                <tr>
+                    <td>{{ reaction.id }}</td>
+                    <td>{{ reaction.body }}</td>
+                    <td>
+                        <a href="{{ path('reaction_show', {'id': reaction.id}) }}">show</a>
+                        <a href="{{ path('reaction_edit', {'id': reaction.id}) }}">edit</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-    <a href="{{ path('reaction_new') }}">Create new</a>
+    <!-- <div class="d-flex justify-content-center">
+        <a class="btn btn-success" href="{{ path('reaction_new') }}">Create new</a>
+    </div> -->
 {% endblock %}

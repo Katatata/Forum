@@ -8,11 +8,12 @@ use App\Entity\Reaction;
 use App\Form\PostType;
 use App\Repository\PostRepository;
 use App\Repository\ReactionRepository;
+use App\Repository\CategoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Form\Extension\Core\Type\{TextType,ButtonType,EmailType,HiddenType,PasswordType,TextareaType,SubmitType,NumberType,DateType,MoneyType,BirthdayType,FileType};
+use Symfony\Component\Form\Extension\Core\Type\{TextType,ButtonType,EmailType,HiddenType,PasswordType,TextareaType,SubmitType,NumberType,DateType,MoneyType,BirthdayType,FileType,ChoiceType};
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Vich\UploaderBundle\Form\Type\VichFileType;
 
@@ -24,14 +25,8 @@ class PostController extends AbstractController
     /**
      * @Route("/", name="post_index", methods={"GET"})
      */
-    public function index(PostRepository $postRepository): Response
+    public function index(PostRepository $postRepository, CategoryRepository $categoryRepository): Response
     {
-        // return $this->render('post/index.html.twig', [
-        //     'posts' => $postRepository->findAll(),
-        //     'amount' => 40,
-        //     'pagePage' => false,
-        // ]);
-
         $limit = 40;
         $realOffset = 0;
 
@@ -42,19 +37,104 @@ class PostController extends AbstractController
         ->getQuery()
         ->getSingleScalarResult();
 
+        $success = 0;
+
+        if(isset($_GET['success'])) {
+            // echo($_GET['success']);
+            $success = $_GET['success'];
+        }
+
         return $this->render('post/index.html.twig', [
+            'success' => $success,
             'array' =>  $postRepository->findAll(),
             'pagePage' => true,
             'currentPage' => 1,
-            'amount' => $amount,
-            'posts' => $postRepository->findBy([], null, $limit, $realOffset),
+            'categories' => $categoryRepository->findAll(),
+            'posts' => $postRepository->findBy(['allowed' => 1], null, $limit, $realOffset),
         ]);
     }
 
     /**
-     * @Route("/page/{offset}", name="post_index_page", methods={"GET"})
+     * @Route("/allow", name="post_allow", methods={"GET","POST"})
      */
-    public function limitShow(PostRepository $postRepository, $offset): Response
+    public function allow(PostRepository $postRepository, Request $request): Response
+    {   
+        $form = $this->createFormBuilder()
+        ->add('Reason', TextareaType::class)
+        ->add('save', SubmitType::class, ['label' => 'Submit', 'attr' => ['class' => 'btn-success btn']])
+        ->getForm();
+
+        return $this->render('post/allow.html.twig', [
+            'posts' => $postRepository->findAll(),
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/allow/{id}/{value}", name="post_allow_update", methods={"GET","POST"})
+     */
+    public function allowUpdate(PostRepository $postRepository, Request $request, Post $post, $id, $value): Response
+    {        
+        $entityManager = $this->getDoctrine()->getManager();
+        $post = $entityManager->getRepository(Post::class)->find($id);        
+
+        if($value == 'true') {
+            $value = 1;
+        } else {
+            $value = 0;
+        }
+
+        $post->setAllowed($value);
+
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->redirectToRoute('post_allow');
+
+    }
+
+    /**
+     * @Route("/allow/reason/{id}/", name="post_allow_reason", methods={"GET","POST"})
+     */
+    public function allowReason(PostRepository $postRepository, Request $request, Post $post, $id): Response
+    {        
+        $entityManager = $this->getDoctrine()->getManager();
+        $post = $entityManager->getRepository(Post::class)->find($id);        
+
+        $post->setReason($request->request->get('_reason'));
+
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->redirectToRoute('post_allow');
+
+    }
+
+    /**
+     * @Route("/category/{id}", name="post_category", methods={"GET"})
+     */
+    public function category(PostRepository $postRepository, CategoryRepository $categoryRepository, $id): Response
+    {
+        $limit = 40;
+        $realOffset = 0;
+        // $postRepository = $postRepository->findBy(['category' => $id]);
+
+        $amount = $postRepository->createQueryBuilder('a')
+        ->select('count(a.id)')
+        ->getQuery()
+        ->getSingleScalarResult();
+
+        return $this->render('post/index.html.twig', [
+            'array' =>  $postRepository->findAll(),
+            'pagePage' => true,
+            'currentPage' => 1,
+            'categories' => $categoryRepository->findAll(),
+            'posts' => $postRepository->findBy(['category' => $id, 'allowed' => 1], null, $limit, $realOffset),
+        ]);
+    }
+
+    /**
+     * @Route("/page/{offset}", defaults={"offset"=1}, name="post_index_page", methods={"GET"})
+     */
+    public function limitShow(PostRepository $postRepository, $offset, CategoryRepository $categoryRepository): Response
     {
         $limit = 40 * $offset;
         $getOffset = $offset - 1;
@@ -75,7 +155,8 @@ class PostController extends AbstractController
             'array' =>  $postRepository->findAll(),
             'pagePage' => true,
             'currentPage' => $offset,
-            'posts' => $postRepository->findBy([], null, $limit, $realOffset),
+            'categories' => $categoryRepository->findAll(),
+            'posts' => $postRepository->findBy(['allowed' => 1], null, $limit, $realOffset),
         ]);
     }
 
@@ -89,7 +170,10 @@ class PostController extends AbstractController
         $form = $this->createFormBuilder($post)
         ->add('Title', TextType::class)
         ->add('Body', TextareaType::class)
-        ->add('imageFile', VichFileType::class, array('label' => 'Brochure (PDF file)'))
+        ->add('imageFile', VichFileType::class, [
+            'label' => 'Brochure (PDF file)',
+            'required'   => false,
+        ])
         ->add('Category', EntityType::class,[
             // looks for choices from this entity
             'class' => Category::class,
@@ -110,10 +194,13 @@ class PostController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
 
             $post->setOP($user);
+            $post->setAllowed(0);
             $entityManager->persist($post);
             $entityManager->flush();
 
-            return $this->redirectToRoute('post_index');
+            return $this->redirectToRoute('post_index', [
+                'success' => true,
+            ]);
         }
 
         return $this->render('post/new.html.twig', [
@@ -148,7 +235,7 @@ class PostController extends AbstractController
 
         $comment = $this->createFormBuilder($reaction)
         ->add('Body', TextareaType::class, ['disabled' => $disabled])
-        ->add('save', SubmitType::class, ['label' => 'Submit', 'disabled' => $disabled, 'attr' => ['class' => 'btn-success btn']])
+        ->add('save', SubmitType::class, ['label' => 'Submit', 'disabled' => $disabled, 'attr' => ['class' => 'btn-success btn btn-raised']])
         ->getForm();
 
         $comment->handleRequest($request);
@@ -178,7 +265,7 @@ class PostController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/page/{offset}", name="post_show_reaction", methods={"GET", "POST"})
+     * @Route("/{id}/page/{offset}", defaults={"offset"=1}, name="post_show_reaction", methods={"GET", "POST"})
      */
     public function showReaction(ReactionRepository $reactionRepository, Post $post, $id, Request $request, $offset): Response
     {
@@ -202,7 +289,7 @@ class PostController extends AbstractController
 
         $comment = $this->createFormBuilder($reaction)
         ->add('Body', TextareaType::class, ['disabled' => $disabled])
-        ->add('save', SubmitType::class, ['label' => 'Submit', 'disabled' => $disabled, 'attr' => ['class' => 'btn-success btn']])
+        ->add('save', SubmitType::class, ['label' => 'Submit', 'disabled' => $disabled, 'attr' => ['class' => 'btn-success btn btn-raised']])
         ->getForm();
 
         $comment->handleRequest($request);
@@ -244,7 +331,10 @@ class PostController extends AbstractController
         $form = $this->createFormBuilder($post)
         ->add('Title', TextType::class)
         ->add('Body', TextareaType::class)
-        ->add('imageFile', VichFileType::class, array('label' => 'Brochure (PDF file)'))
+        ->add('imageFile', VichFileType::class, [
+            'label' => 'Brochure (PDF file)',
+            'required'   => false,
+        ])
         ->add('Category', EntityType::class,[
             // looks for choices from this entity
             'class' => Category::class,

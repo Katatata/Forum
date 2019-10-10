@@ -48,7 +48,7 @@ class Post
     private $reactions;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @var string
      */
     private $image;
@@ -60,10 +60,20 @@ class Post
     private $imageFile;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      * @var \DateTime
      */
     private $updatedAt;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $allowed;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $Reason;
 
     public function __construct()
     {
@@ -184,5 +194,29 @@ class Post
     public function getImage()
     {
         return $this->image;
+    }
+
+    public function getAllowed(): ?bool
+    {
+        return $this->allowed;
+    }
+
+    public function setAllowed(bool $allowed): self
+    {
+        $this->allowed = $allowed;
+
+        return $this;
+    }
+
+    public function getReason(): ?string
+    {
+        return $this->Reason;
+    }
+
+    public function setReason(?string $Reason): self
+    {
+        $this->Reason = $Reason;
+
+        return $this;
     }
 }

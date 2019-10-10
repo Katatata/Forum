@@ -1,5 +1,6 @@
 body {
     color: #bbbbbb;
+    font-family: 'Quicksand', 'sans-serif';
 }
 
 .forum-container {
@@ -20,11 +21,23 @@ body {
 .posts-container :first-child {
     margin-top: 0px;
 }
+
 @media screen and (max-width: 769px) {
     .posts-container {
         padding: 30px 0;
     }
+
+    .forum-container.container .side-bar {
+        position: static;
+        margin-left: 0;
+        margin-top: 0;
+        width: auto;
+        border: 1px solid;
+        background-color: #191919;
+        padding: 20px;
+    }
 }
+
 .post-container {
     background: #191919;
     border-radius: 5px;
@@ -124,3 +137,16 @@ hr {
 .page-num-space {
     margin-bottom: 50px;
 }
+
+.side-bar {
+    position: fixed;
+    /* right: 10px; */
+    /* left: 10px; */
+    margin-left: -250px;
+    margin-top: 70px;
+    width: 250px;
+    border: 1px solid;
+    background-color: #191919;
+    padding: 20px;
+}
+

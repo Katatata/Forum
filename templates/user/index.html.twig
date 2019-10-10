@@ -3,53 +3,69 @@
 {% block title %}User index{% endblock %}
 
 {% block body %}
-    <h1>User index</h1>
+    <h1 class="d-flex justify-content-center">User index</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Username</th>
-                <th>UsernameCanonical</th>
-                <th>Email</th>
-                <th>EmailCanonical</th>
-                <th>Enabled</th>
-                <th>Salt</th>
-                <th>Password</th>
-                <th>LastLogin</th>
-                <th>ConfirmationToken</th>
-                <th>PasswordRequestedAt</th>
-                <th>Roles</th>
-                <th>Id</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
-            <tr>
-                <td>{{ user.username }}</td>
-                <td>{{ user.usernameCanonical }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.emailCanonical }}</td>
-                <td>{{ user.enabled ? 'Yes' : 'No' }}</td>
-                <td>{{ user.salt }}</td>
-                <td>{{ user.password }}</td>
-                <td>{{ user.lastLogin ? user.lastLogin|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ user.confirmationToken }}</td>
-                <td>{{ user.passwordRequestedAt ? user.passwordRequestedAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ user.roles ? user.roles|join(', ') : '' }}</td>
-                <td>{{ user.id }}</td>
-                <td>
-                    <a href="{{ path('user_show', {'id': user.id}) }}">show</a>
-                    <a href="{{ path('user_edit', {'id': user.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="13">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <div class="container-fluid">
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Id</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Roles</th>
+                    <th>Allowed</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.roles ? user.roles|join(', ') : '' }}</td>
+                    <td>
+                        <div class="mdc-switch">
+                            <div class="mdc-switch__track"></div>
+                            <div class="mdc-switch__thumb-underlay">
+                                <div class="mdc-switch__thumb">
+                                    {% set value = "" %}
+                                    {% if user.Allowed == 1 %}
+                                        {% set value = "checked" %}
+                                    {% endif %}
+                                    <input {{value}} type="checkbox" id="basic-switch" class="mdc-switch__native-control" role="switch" onclick="test(this)" user-id="{{user.id}}">
+                                </div>
+                            </div>
+                        </div>
+                        <label for="basic-switch">no/yes</label>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="13">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-    <a href="{{ path('user_new') }}">Create new</a>
+    <!-- <a href="{{ path('user_new') }}">Create new</a> -->
+
+    <script>
+            function test(el) {
+                console.log(el.checked, el.getAttribute("user-id"));
+                timer(el);
+            }
+
+            let time;
+    
+            function timer(el) {
+                clearTimeout(time);
+    
+                time = setTimeout(() => {
+    
+                    window.location.href = `/user/allow/${el.getAttribute("user-id")}/${el.checked}`;
+    
+                }, 0);
+            }
+        </script>
 {% endblock %}

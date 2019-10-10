@@ -31,6 +31,11 @@ class User extends BaseUser
      */
     private $reactions;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $Allowed;
+
     public function __construct()
     {
         parent::__construct();
@@ -97,6 +102,18 @@ class User extends BaseUser
                 $reaction->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAllowed(): ?bool
+    {
+        return $this->Allowed;
+    }
+
+    public function setAllowed(bool $Allowed): self
+    {
+        $this->Allowed = $Allowed;
 
         return $this;
     }

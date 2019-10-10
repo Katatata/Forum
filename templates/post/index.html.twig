@@ -5,12 +5,40 @@
 {% block body %}
     <!-- <h1>Forum</h1> -->
 
-    <button onclick="window.location.href ='/post/new'" class="btn btn-success navbar-btn" style="display: block;margin-left: auto;margin-right: auto;">
-        <i class="fas fa-pencil-alt"></i> 
-        <span>Create post</span>
-    </button>
-
+    {% if success == true %}
+        <div class="container"> 
+            <h3 class="d-flex justify-content-center">Your post has been submitted!</h3>
+            <h4 class="d-flex justify-content-center">Now wait for the admins to review your post</h4>
+        </div>
+    {% endif %}
     <div class="forum-container container">
+            <div class="side-bar">
+                    <button onclick="window.location.href ='/post/new'" class="btn btn-success btn-raised navbar-btn" style="display: block;margin-left: auto;margin-right: auto;">
+                        <i class="fas fa-pencil-alt"></i> 
+                        <span>Create post</span>
+                    </button>
+                    <ul>
+                        <h3>Categories:</h3>
+                        {% for category in categories %}
+                            <li>
+                                <a href="/post/category/{{category.id}}">{{category}}</a>
+                            {% if category.description %}
+                            </br>
+                                {{category.description}}
+                            {% endif %}
+                            </br>
+                            {% set allowedPosts = 0 %}
+                            {% for post in category.posts %}
+                                {% if post.allowed == 1 %}
+                                    {% set allowedPosts = allowedPosts + 1 %}
+                                {% endif %}
+                            {% endfor %}
+                                Posts: <i class="far fa-comment-alt"></i> {{allowedPosts}}
+                            </li>
+                        {% endfor %}
+                    </ul> 
+            </div>
+            
         <div class="posts-container">
             {% for post in posts %}
                 <div class="post-container" id="{{post.id}}" onclick="show(this)">

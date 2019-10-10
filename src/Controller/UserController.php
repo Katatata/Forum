@@ -94,4 +94,28 @@ class UserController extends AbstractController
 
         return $this->redirectToRoute('user_index');
     }
+
+    
+    /**
+     * @Route("/allow/{id}/{value}", name="user_allow_update", methods={"GET","POST"})
+     */
+    public function allowUpdate(Request $request, $id, $value): Response
+    {        
+        $entityManager = $this->getDoctrine()->getManager();
+        $user = $entityManager->getRepository(User::class)->find($id);        
+
+        if($value == 'true') {
+            $value = 1;
+        } else {
+            $value = 0;
+        }
+
+        $user->setAllowed($value);
+
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->redirectToRoute('user_index');
+
+    }
+
 }

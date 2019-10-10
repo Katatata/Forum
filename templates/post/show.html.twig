@@ -50,6 +50,7 @@
                 </div>
                 <div class="post-preview">
                     <span class="post-text">{{post.body}}</span>  
+                    <img class="post-image" src="{{ vich_uploader_asset(post, 'imageFile') }}" alt="{{ post.image }}"/>
                 </div>
                 <div style="display: flex;justify-content: flex-end;">
                     {# <div class="post-op" onclick="cat(this)">{{post.op}}</div> #}

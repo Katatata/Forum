@@ -1,4 +1,6 @@
 security:
+    always_authenticate_before_granting: true
+
     encoders:
         FOS\UserBundle\Model\UserInterface: bcrypt
 
@@ -33,3 +35,7 @@ security:
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/, role: ROLE_ADMIN }
         - { path: ^/post/new, role: IS_AUTHENTICATED_FULLY }
+        - { path: ^/post/allow, role: ROLE_ADMIN }
+        # - { path: ^/user, role: ROLE_ADMIN }
+        - { path: ^/category, role: ROLE_ADMIN }
+        - { path: ^/reaction, role: ROLE_ADMIN }
