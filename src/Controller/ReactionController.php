@@ -121,4 +121,32 @@ class ReactionController extends AbstractController
 
         return $this->redirect($goBack);
     }
+
+    /**
+     * @Route("/reply", name="reaction_reply", methods={"GET","POST"})
+     */
+    public function reply(Request $request): Response
+    {
+        $reaction = new Reaction();
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $body = $request->request->get('_body');
+        $parent = $request->request->get('_parent');
+        $parent = $entityManager->getRepository(Reaction::class)->find($parent);       
+
+        $user = $this->container->get('security.token_storage')->getToken()->getUser();
+
+        $reaction->setBody($body);
+        $reaction->setParentReaction($parent);
+        $reaction->setUser($user);
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($reaction);
+        $entityManager->flush();
+        
+
+        $goBack = '/post/'.strval($request->request->get('_post'));
+
+        return $this->redirect($goBack);
+    }
 }

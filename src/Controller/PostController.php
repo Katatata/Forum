@@ -27,23 +27,20 @@ class PostController extends AbstractController
      */
     public function index(PostRepository $postRepository, CategoryRepository $categoryRepository): Response
     {
+        // Set limit of post amount
         $limit = 40;
         $realOffset = 0;
 
-        $amount = $postRepository->createQueryBuilder('a')
-        // Filter by some parameter if you want
-        // ->where('a.published = 1')
-        ->select('count(a.id)')
-        ->getQuery()
-        ->getSingleScalarResult();
-
+        //Default post submit success
         $success = 0;
 
+        // If post is successfully submitted, show messege
         if(isset($_GET['success'])) {
             // echo($_GET['success']);
             $success = $_GET['success'];
         }
 
+        // Login check
         $securityContext = $this->container->get('security.authorization_checker');
         if ($securityContext->isGranted('IS_AUTHENTICATED_FULLY')) {
             $user = $this->container->get('security.token_storage')->getToken()->getUser();
@@ -81,6 +78,7 @@ class PostController extends AbstractController
         ]);
     }
 
+        
     /**
      * @Route("/allow", name="post_allow", methods={"GET","POST"})
      */
@@ -136,18 +134,38 @@ class PostController extends AbstractController
     }
 
     /**
+     * @Route("/page/{offset}", defaults={"offset"=1}, name="post_index_page", methods={"GET"})
+     */
+    public function limitShow(PostRepository $postRepository, $offset, CategoryRepository $categoryRepository): Response
+    {
+        // Set post limit
+        $limit = 40 * $offset;
+        $getOffset = $offset - 1;
+        $realOffset = $getOffset * 40;
+
+        // If page is 1 then just go to /post
+        if($offset == 1) {
+            return $this->redirectToRoute('post_index');
+        }
+
+        return $this->render('post/index.html.twig', [
+            'array' =>  $postRepository->findBy(['allowed' => 1]),
+            'success' => false,
+            'pagePage' => true,
+            'currentPage' => $offset,
+            'categories' => $categoryRepository->findAll(),
+            'posts' => $postRepository->findBy(['allowed' => 1], null, $limit, $realOffset),
+        ]);
+    }
+
+    /**
      * @Route("/category/{id}", name="post_category", methods={"GET"})
      */
     public function category(PostRepository $postRepository, CategoryRepository $categoryRepository, $id): Response
     {
+        // Limit post amount
         $limit = 40;
         $realOffset = 0;
-        // $postRepository = $postRepository->findBy(['category' => $id]);
-
-        $amount = $postRepository->createQueryBuilder('a')
-        ->select('count(a.id)')
-        ->getQuery()
-        ->getSingleScalarResult();
 
         return $this->render('post/index.html.twig', [
             'array' =>  $postRepository->findBy(['allowed' => 1]),
@@ -160,42 +178,11 @@ class PostController extends AbstractController
     }
 
     /**
-     * @Route("/page/{offset}", defaults={"offset"=1}, name="post_index_page", methods={"GET"})
-     */
-    public function limitShow(PostRepository $postRepository, $offset, CategoryRepository $categoryRepository): Response
-    {
-        $limit = 40 * $offset;
-        $getOffset = $offset - 1;
-        $realOffset = $getOffset * 40;
-
-        $amount = $postRepository->createQueryBuilder('a')
-        // Filter by some parameter if you want
-        // ->where('a.published = 1')
-        ->select('count(a.id)')
-        ->getQuery()
-        ->getSingleScalarResult();
-
-        if($offset == 1) {
-            return $this->redirectToRoute('post_index');
-
-        }
-        return $this->render('post/index.html.twig', [
-            'array' =>  $postRepository->findBy(['allowed' => 1]),
-            'success' => false,
-            'pagePage' => true,
-            'currentPage' => $offset,
-            'categories' => $categoryRepository->findAll(),
-            'posts' => $postRepository->findBy(['allowed' => 1], null, $limit, $realOffset),
-        ]);
-    }
-
-    /**
      * @Route("/new", name="post_new", methods={"GET","POST"})
      */
     public function new(Request $request): Response
     {
         $post = new Post();
-        // $form = $this->createForm(PostType::class, $post);
         $form = $this->createFormBuilder($post)
         ->add('Title', TextType::class)
         ->add('Body', TextareaType::class)
@@ -403,4 +390,5 @@ class PostController extends AbstractController
 
         return $this->redirectToRoute('post_index');
     }
+
 }

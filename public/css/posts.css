@@ -84,6 +84,7 @@ body {
 
 .post-image {
     max-width: -webkit-fill-available;
+    width: 100%;
 }
 
 
@@ -123,6 +124,7 @@ hr {
     height: 33px;
     text-align: center;
     color: #e1e1e185;
+    background-color: #2e2e2e;
 }
 
 .page-num{
@@ -145,8 +147,25 @@ hr {
     margin-left: -310px;
     margin-top: 70px;
     width: 300px;
-    border: 1px solid;
+    border: 1px #818181 solid;
     background-color: #191919;
     padding: 20px;
+    border-radius: 5px;
 }
 
+.back {
+    background-image: url(https://data.whicdn.com/images/182027335/large.jpg);
+    -webkit-filter: blur(8px);
+    height: 110%;
+    background-position: center;
+    /* background-repeat: no-repeat; */
+    background-size: contain;
+    width: 110%;
+    position: fixed;
+    top: 0;
+    z-index: -1;
+}
+
+header {
+    background-color: #2e2e2e;
+}

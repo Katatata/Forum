@@ -98,7 +98,7 @@
                 </div>
                 <div class="comments" id="comments">
                     {% for comment in comments %}
-                        <div class="comment">
+                        <div class="comment" onmouseenter="showComment(this)" onmouseleave="hideComment(this)">
                             <span class="post-category">{{ comment.user }}</span>
                             </br>
                             <span>{{ comment }} </span>
@@ -108,17 +108,46 @@
                                     <input type="hidden" name="_method" value="CUSTOM">
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ comment.id) }}">
                                     <input type="hidden" name="_post" value="{{ post.id }}">
-                                    <button style="background-color: transparent;border: none;">
+                                    <button style="cursor: pointer;background-color: transparent;border: none;">
                                         <i class="fas fa-trash" style="color: red;"></i>
                                     </button>
                                 </form>
                                 <form method="post" action="{{ path('reaction_edit', {'id': comment.id}) }}" style=" float: right">
                                     <input type="hidden" name="_post" value="{{ post.id }}">
-                                    <button style="background-color: transparent;border: none;">
+                                    <button style="cursor: pointer;background-color: transparent;border: none;">
                                         <i class="fas fa-pencil-alt" style="color: #f7f76ee0;"></i>
                                     </button>
                                 </form>
-                            {% endif %}
+
+                                {% endif %}
+                                <a class="showComment" style="cursor: pointer;padding: 0 10px;float:right;display: none;" {% if user != 'none' %}onclick="showCommentBox(this)" {% else %}onclick="window.location.href = '/login'"{% endif %}>
+                                    <i class="fas fa-comment-dots"></i>
+                                </a>
+
+                            <div class="reply" style="display: none;">
+                                <div class="mdc-text-field  mdc-text-field--fullwidth mdc-text-field--textarea {% if user == 'none' %}mdc-text-field--disabled{% endif %}" style="margin-top: 18px;padding: 0px 20px;">
+                                        <div class="mdc-text-field-character-counter">0 / 10000</div>
+                                        <textarea onkeyup="transfer(this)" class="mdc-text-field__input" rows="4" cols="40" maxlength="140" {% if user == 'none' %}disabled{% endif %}></textarea>
+                            
+                                        <div class="mdc-notched-outline">
+                                            <div class="mdc-notched-outline__leading"></div>
+                                            <div class="mdc-notched-outline__notch">
+                                            <label for="textarea" class="mdc-floating-label">Comment</label>
+                                            </div>
+                                            <div class="mdc-notched-outline__trailing"></div>
+                                        </div>
+                                </div>
+                                {% if user != 'none' %}
+                                    <form method="post" action="{{ path('reaction_reply') }}">
+                                        <input class="body-value" type="hidden" name="_body" value="">
+                                        <input class="post-value" type="hidden" name="_post" value="{{ currentPost }}">
+                                        <input class="reaction-id" type="hidden" name="_parent" value="{{ comment.id }}">
+                                        <button class="btn btn-primary btn-raised" style="margin: 20px 0;">
+                                            Submit
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
 
                             {% set hasReply = false %}
 
@@ -206,6 +235,28 @@
             else if(element.parentElement.previousElementSibling.style.display === 'none') {
                 element.parentElement.previousElementSibling.style.display = 'block';
                 element.innerHTML = 'Hide replies...';
+            }
+        }
+
+        function transfer(el) {
+            console.log(el.value, el.parentElement.parentElement.parentElement.querySelector(".body-value").value);
+            el.parentElement.parentElement.parentElement.querySelector(".body-value").value = el.value;
+        }
+
+        function showComment(element) {
+            element.querySelector('.showComment').style.display = 'inline'
+        }
+
+        function hideComment(element) {
+            element.querySelector('.showComment').style.display = 'none'
+        }
+
+        function showCommentBox(element) {
+            if(element.parentElement.querySelector('.reply').style.display === 'none') {
+                element.parentElement.querySelector('.reply').style.display = 'block';
+            }
+            else if(element.parentElement.querySelector('.reply').style.display === 'block') {
+                element.parentElement.querySelector('.reply').style.display = 'none';
             }
         }
     </script>
