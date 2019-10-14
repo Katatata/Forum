@@ -42,6 +42,8 @@ class User extends BaseUser
         $this->posts = new ArrayCollection();
         $this->reactions = new ArrayCollection();
         // your own logic
+        $this->setAllowed(false);
+
     }
 
     /**

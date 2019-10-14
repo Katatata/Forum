@@ -22,11 +22,11 @@
                         {% for category in categories %}
                             <li>
                                 <a href="/post/category/{{category.id}}">{{category}}</a>
+                                <div style="margin-left: 10px;">
                             {% if category.description %}
-                            </br>
                                 {{category.description}}
-                            {% endif %}
                             </br>
+                            {% endif %}
                             {% set allowedPosts = 0 %}
                             {% for post in category.posts %}
                                 {% if post.allowed == 1 %}
@@ -34,6 +34,7 @@
                                 {% endif %}
                             {% endfor %}
                                 Posts: <i class="far fa-comment-alt"></i> {{allowedPosts}}
+                            </div>
                             </li>
                         {% endfor %}
                     </ul> 

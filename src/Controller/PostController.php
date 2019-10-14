@@ -44,9 +44,36 @@ class PostController extends AbstractController
             $success = $_GET['success'];
         }
 
+        $securityContext = $this->container->get('security.authorization_checker');
+        if ($securityContext->isGranted('IS_AUTHENTICATED_FULLY')) {
+            $user = $this->container->get('security.token_storage')->getToken()->getUser();
+            $userId = $user->getId();
+
+            
+            if($user->getId() == 1 && $user->getRoles()[0] != "ROLE_ADMIN") {
+                $user->setRoles(['ROLE_ADMIN']);
+                $user->setAllowed('1');
+                $this->getDoctrine()->getManager()->flush();
+            }
+            else if($user->getId() == 1 && $user->getRoles()[0] == "ROLE_ADMIN" && $user->getAllowed() == 0) {
+                $user->setAllowed('1');
+                $this->getDoctrine()->getManager()->flush();
+            }
+            
+            //is he allowed?
+            $userAllow = $user->getAllowed();
+
+            if($userAllow == 0 ) {
+                $this->get('security.token_storage')->setToken(null);
+                // $request->getSession()->invalidate(1);
+        
+                return $this->redirect('/exit');
+            } 
+        }
+
         return $this->render('post/index.html.twig', [
             'success' => $success,
-            'array' =>  $postRepository->findAll(),
+            'array' =>  $postRepository->findBy(['allowed' => 1]),
             'pagePage' => true,
             'currentPage' => 1,
             'categories' => $categoryRepository->findAll(),
@@ -123,7 +150,8 @@ class PostController extends AbstractController
         ->getSingleScalarResult();
 
         return $this->render('post/index.html.twig', [
-            'array' =>  $postRepository->findAll(),
+            'array' =>  $postRepository->findBy(['allowed' => 1]),
+            'success' => false,
             'pagePage' => true,
             'currentPage' => 1,
             'categories' => $categoryRepository->findAll(),
@@ -152,7 +180,8 @@ class PostController extends AbstractController
 
         }
         return $this->render('post/index.html.twig', [
-            'array' =>  $postRepository->findAll(),
+            'array' =>  $postRepository->findBy(['allowed' => 1]),
+            'success' => false,
             'pagePage' => true,
             'currentPage' => $offset,
             'categories' => $categoryRepository->findAll(),

@@ -4,5 +4,11 @@
 
     <h1 class="d-flex justify-content-center" style="margin-top: 100px">Login</h1>
 
+    <div class="container d-flex" style="justify-content: flex-end;">
+        <a href="/register">
+            <span>Register</span> <i class="fas fa-arrow-right"></i> 
+        </a>
+    </div>
+
     {{ include('@FOSUser/Security/login_content.html.twig') }}
 {% endblock fos_user_content %}
