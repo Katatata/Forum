@@ -94,6 +94,23 @@ class PostController extends AbstractController
             'form' => $form->createView()
         ]);
     }
+        
+    /**
+     * @Route("/allow/{yesOrYes}", defaults={"offset"=1}, name="post_allow_allowed", methods={"GET","POST"})
+     */
+    public function allowAllowed(PostRepository $postRepository, Request $request, $yesOrYes): Response
+    {   
+        $form = $this->createFormBuilder()
+        ->add('Reason', TextareaType::class)
+        ->add('save', SubmitType::class, ['label' => 'Submit', 'attr' => ['class' => 'btn-success btn']])
+        ->getForm();
+
+        return $this->render('post/allow.html.twig', [
+            'posts' => $postRepository->findBy(['allowed' => $yesOrYes]),
+            'form' => $form->createView(),
+            'current' => $yesOrYes
+        ]);
+    }
 
     /**
      * @Route("/allow/{id}/{value}", name="post_allow_update", methods={"GET","POST"})
