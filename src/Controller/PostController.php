@@ -113,6 +113,23 @@ class PostController extends AbstractController
     }
 
     /**
+     * @Route("/reason/{yesOrYes}", defaults={"yesOrYes"=2}, name="post_reason", methods={"GET","POST"})
+     */
+    public function reason(PostRepository $postRepository, Request $request, $yesOrYes): Response
+    {   
+        
+        $search = $postRepository->findBy(['allowed' => $yesOrYes]);
+        
+        if($yesOrYes == 2) {
+            $search = $postRepository->findAll();
+        }
+        return $this->render('post/plebs.html.twig', [
+            'posts' => $search,
+            'current' => $yesOrYes
+        ]);
+    }
+
+    /**
      * @Route("/allow/{id}/{value}", name="post_allow_update", methods={"GET","POST"})
      */
     public function allowUpdate(PostRepository $postRepository, Request $request, Post $post, $id, $value): Response

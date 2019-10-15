@@ -118,4 +118,21 @@ class UserController extends AbstractController
 
     }
 
+            
+    /**
+     * @Route("/allow/{yesOrYes}", defaults={"offset"=1}, name="user_allow_allowed", methods={"GET","POST"})
+     */
+    public function allowAllowed($yesOrYes): Response
+    {   
+
+        $users = $this->getDoctrine()
+        ->getRepository(User::class)
+        ->findBy(['Allowed' => $yesOrYes]);
+
+        return $this->render('user/index.html.twig', [
+            'users' => $users,
+            'current' => $yesOrYes
+        ]);
+    }
+
 }

@@ -3,7 +3,7 @@
 {% block title %}Post index{% endblock %}
 
 {% block body %}
-    <h1 class="d-flex justify-content-center">Post index</h1>
+    <h1 class="d-flex justify-content-center">Post allow</h1>
 
     <div class="d-flex" style="justify-content: center;padding-bottom: 20px;">
         <div class="mdc-select mdc-select--outlined mdc-select--focused" style="margin-top: 18px;">
@@ -44,10 +44,8 @@
         <table class="table">
             <thead class="thead-dark">
                 <tr>
-                    <th>Id</th>
                     <th>Category</th>
                     <th>Title</th>
-                    <th style="width:30%;">Body</th>
                     <th>Allowed</th>
                     <th style="width:30%;">Reason</th>
                 </tr>
@@ -55,44 +53,20 @@
             <tbody>
             {% for post in posts %}
                 <tr>
-                    <td>{{ post.id }}</td>
                     <td>{{ post.Category }}</td>
                     <td>{{ post.Title }}</td>
                     <td>
-                        <a href="javascript:void(0)" onclick="showReason(this)">Show body...</a>
-                        <div class="mdc-text-field  mdc-text-field--fullwidth mdc-text-field--textarea" style="margin-top: 18px;padding: 0px 20px;display:none;">
-                            <div class="mdc-text-field-character-counter">0 / 10000</div>
-                            <textarea readonly class="mdc-text-field__input" rows="4" cols="10" maxlength="140" onkeyup="transfer(this)">{{post.Body}}</textarea>
-                
-                            <div class="mdc-notched-outline">
-                                <div class="mdc-notched-outline__leading"></div>
-                                <div class="mdc-notched-outline__notch">
-                                <label for="textarea" class="mdc-floating-label">Comment</label>
-                                </div>
-                                <div class="mdc-notched-outline__trailing"></div>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="mdc-switch">
-                            <div class="mdc-switch__track"></div>
-                            <div class="mdc-switch__thumb-underlay">
-                            <div class="mdc-switch__thumb">
-                                {% set value = "" %}
-                                {% if post.Allowed == 1 %}
-                                    {% set value = "checked" %}
-                                {% endif %}
-                                <input {{value}} type="checkbox" id="basic-switch" class="mdc-switch__native-control" role="switch" onclick="test(this)" post-id="{{post.id}}">
-                            </div>
-                            </div>
-                        </div>
-                        <label for="basic-switch">no/yes</label>
+                        {% if post.Allowed == 1 %}
+                            Yes
+                        {% else %}
+                            No
+                        {% endif %}
                     </td>
                     <td>
                         <a href="javascript:void(0)" onclick="showReason(this)">Show reason of allow...</a>
                         <div class="mdc-text-field  mdc-text-field--fullwidth mdc-text-field--textarea" style="margin-top: 18px;padding: 0px 20px;display:none;">
                             <div class="mdc-text-field-character-counter">0 / 10000</div>
-                            <textarea class="mdc-text-field__input" rows="4" cols="10" maxlength="140" onkeyup="transfer(this)">{{post.reason}}</textarea>
+                            <textarea readonly class="mdc-text-field__input" rows="4" cols="10" maxlength="140" onkeyup="transfer(this)">{{post.reason}}</textarea>
                 
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
@@ -102,13 +76,6 @@
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
                         </div>
-                        <form method="post" action="{{ path('post_allow_reason', {'id': post.id}) }}" style=" float: right;display:none;">
-                                <input class="reason-value" type="hidden" name="_reason" value="">
-                                <input class="reason-id" type="hidden" name="_post" value="{{ post.id }}">
-                                <button class="btn btn-primary">
-                                    Submit
-                                </button>
-                        </form>
                     </td>
                 </tr>
             {% else %}
@@ -120,28 +87,6 @@
         </table>
     </div>
     <script>
-        function test(el) {
-            console.log(el.checked, el.getAttribute("post-id"));
-            timer(el);
-        }
-
-        function transfer(el) {
-            console.log(el.value, el.parentElement.parentElement.nextElementSibling.querySelector(".reason-value").value);
-            el.parentElement.parentElement.nextElementSibling.querySelector(".reason-value").value = el.value;
-        }
-
-        let time;
-
-        function timer(el) {
-            clearTimeout(time);
-
-            time = setTimeout(() => {
-
-                window.location.href = `/post/allow/${el.getAttribute("post-id")}/${el.checked}`;
-
-            }, 0);
-        }
-
         function showReason(el) {
             if(el.nextElementSibling.style.display === 'none') {
                 el.nextElementSibling.style.display = 'inline-flex';
@@ -157,7 +102,7 @@
         }
 
         function redirect(direct) {
-            window.location.href = `/post/allow/${direct}`
+            window.location.href = `/post/reason/${direct}`
         }
     </script>
 

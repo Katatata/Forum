@@ -5,6 +5,41 @@
 {% block body %}
     <h1 class="d-flex justify-content-center">User index</h1>
 
+    <div class="d-flex" style="justify-content: center;padding-bottom: 20px;">
+        <div class="mdc-select mdc-select--outlined mdc-select--focused" style="margin-top: 18px;">
+            <i class="mdc-select__dropdown-icon"></i>
+            <select class="mdc-select__native-control" onchange="redirect(this.value)">
+                {# <option value="" disabled selected></option> #}
+                {% if current is defined %}
+                    <option value="">
+                    Show All
+                    </option>
+                    <option {% if current == 0 %}selected{% endif %} value="0">
+                    Not Allowed only
+                    </option>
+                    <option {% if current == 1 %}selected{% endif %} value="1">
+                    Allowed only
+                    </option>
+                {% else %}
+                    <option value="">
+                    Show All
+                    </option>
+                    <option value="0">
+                    Not Allowed only
+                    </option>
+                    <option value="1">
+                    Allowed only
+                    </option>
+                {% endif %}
+            </select>     
+            <div class="mdc-notched-outline">
+                <div class="mdc-notched-outline__leading"></div>
+                    <label class="mdc-floating-label"></label>
+                <div class="mdc-notched-outline__trailing"></div>
+            </div>
+            <div class="mdc-line-ripple"></div>
+        </div>
+    </div>
     <div class="container-fluid">
         <table class="table">
             <thead class="thead-dark">
@@ -66,6 +101,15 @@
                     window.location.href = `/user/allow/${el.getAttribute("user-id")}/${el.checked}`;
     
                 }, 0);
+            }
+
+            function redirect(direct) {
+                if(direct === "") {
+                    window.location.href = `/user/`
+                }
+                else {
+                    window.location.href = `/user/allow/${direct}`
+                }
             }
         </script>
 {% endblock %}
