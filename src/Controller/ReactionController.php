@@ -113,6 +113,15 @@ class ReactionController extends AbstractController
     {
         if ($this->isCsrfTokenValid('delete'.$reaction->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
+
+            $children = $reaction->getReactions();
+
+            foreach ($children as $child) {
+                $childId = $child->getId();
+                $entityManager->remove($child);
+
+            };
+
             $entityManager->remove($reaction);
             $entityManager->flush();
         }
