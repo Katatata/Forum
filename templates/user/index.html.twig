@@ -86,23 +86,14 @@
     <!-- <a href="{{ path('user_new') }}">Create new</a> -->
 
     <script>
-            function test(el) {
-                console.log(el.checked, el.getAttribute("user-id"));
-                timer(el);
-            }
+        let checks = document.querySelectorAll("input[type='checkbox']");
 
-            let time;
-    
-            function timer(el) {
-                clearTimeout(time);
-    
-                time = setTimeout(() => {
-    
-                    window.location.href = `/user/allow/${el.getAttribute("user-id")}/${el.checked}`;
-    
-                }, 0);
-            }
-
+        for (let check of checks) {
+            check.addEventListener("mouseup", (e) => {
+                //console.log(`/user/allow/${e.target.getAttribute("user-id")}/${e.target.checked}`)
+                window.location.href = `/user/allow/${e.target.getAttribute("user-id")}/${!e.target.checked}`;
+            })
+        }
             function redirect(direct) {
                 if(direct === "") {
                     window.location.href = `/user/`
